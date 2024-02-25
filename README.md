@@ -1,0 +1,3 @@
+- roadmap link => https://docs.google.com/document/d/1m-xCAAIDmP6fSCcrJJ-BF8ICF0kjCaDXBXZuy6wD_e4/edit?usp=sharing
+- main google sheets for task tracking and saving results => https://docs.google.com/spreadsheets/d/1iNXDL1k2kcV5KXFPXtKLKKfIRK80ZU-HS-iSFRhIIdw/edit?usp=sharing
+- wikipedia content dump => https://dumps.wikimedia.org/other/contenttranslation
