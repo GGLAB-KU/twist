@@ -4,7 +4,7 @@
 
 1. **Create a Conda environment** by running the following command:
    ```
-   conda create --name <env_name> python=3.8
+   conda create --name <env_name> python=3.10
    ```
    Replace `<env_name>` with your desired environment name.
 
