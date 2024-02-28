@@ -44,6 +44,15 @@ This tool reads the downloaded JSON files and merges HTML and text data into a C
 ```python
 reader = ContentDumpReader(num_dumps=1)
 count_without_mts = reader.count_without_mts(reader.content_dumps[0])
+
+ter_value = reader.compute_ter(reader.content_dumps[0])
+
+ned_value = reader.compute_ned(reader.content_dumps[0], filter_by_len=False)
+
+mt_eq_target_filtered = reader.compute_mt_eq_target(reader.content_dumps[0], filter_by_len=False)
+mt_eq_target = reader.compute_mt_eq_target(reader.content_dumps[0], filter_by_len=True)
+
+stats = reader.compare_sentence_word_len(reader.content_dumps[0])
 ```
 
 ### Useful Links
