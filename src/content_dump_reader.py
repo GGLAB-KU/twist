@@ -1,10 +1,16 @@
 import json
 import os
+from typing import Dict, List, Tuple, Optional
 
 import ijson
+import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
+from torchmetrics import MeanMetric
 from tqdm import tqdm
+from torchmetrics.text import TranslationEditRate
+import Levenshtein
+from nltk.tokenize import sent_tokenize, word_tokenize
 
 
 class ContentDumpReader:
@@ -47,6 +53,142 @@ class ContentDumpReader:
             'num_docs_without_mts': num_docs_without_mts,
             'num_sections_without_mts': num_sections_without_mts
         }
+
+    def _read_dump_as_df_dict(self, dump_alias: str) -> List[Dict]:
+        csv_path = self.csv_dict[dump_alias]
+        content_df = pd.read_csv(csv_path, dtype={'id_2': pd.StringDtype()})
+        content_df = content_df.dropna(subset=['mt', 'target'])
+        df_records = content_df.to_dict('records')
+        df_records.sort(key=lambda x: len(x['target']), reverse=True)
+        return df_records
+
+    def compute_ter(self, dump_alias: str) -> float:
+        df_records = self._read_dump_as_df_dict(dump_alias)
+        df_records = list(filter(lambda x: 5 < len(x['target']) <= 250, df_records))
+
+        ter = TranslationEditRate().to('cuda')
+        current_batch_preds = []
+        current_batch_targets = []
+        batch_size = 128
+
+        for i, row in enumerate(tqdm(df_records)):
+            pred = row['mt']
+            target = row['target']
+            current_batch_preds.append(pred)
+            current_batch_targets.append([target])
+            if i != 0 and i % batch_size == 0:
+                ter.update(current_batch_preds, current_batch_targets)
+                current_batch_preds = []
+                current_batch_targets = []
+
+        result = ter.compute()
+        return result
+
+    def compute_ned(self, dump_alias: str, filter_by_len: bool = True) -> float:
+        df_records = self._read_dump_as_df_dict(dump_alias)
+        if filter_by_len:
+            df_records = list(filter(lambda x: 5 < len(x['target']) <= 250, df_records))
+
+        metric = MeanMetric()
+
+        for i, row in enumerate(tqdm(df_records)):
+            pred = row['mt']
+            target = row['target']
+            edit_distance = Levenshtein.distance(pred, target)
+            normalized_edit_distance = edit_distance / max(len(pred), len(target))
+            metric.update(normalized_edit_distance)
+
+        result = metric.compute()
+        return result
+
+    def compute_mt_eq_target(self, dump_alias: str, filter_by_len: bool = True) -> Tuple[int, int]:
+        df_records = self._read_dump_as_df_dict(dump_alias)
+
+        if filter_by_len:
+            df_records = list(filter(lambda x: 5 < len(x['target']) <= 250, df_records))
+
+        count = 0
+        for i, row in enumerate(tqdm(df_records)):
+            pred = row['mt']
+            target = row['target']
+            if pred == target:
+                count += 1
+
+        return count, len(df_records)
+
+    def compare_sentence_word_len(self,
+                                  dump_alias: str):
+        all_df_records = self._read_dump_as_df_dict(dump_alias)
+        # all_df_records = list(filter(lambda x: 200 < len(x['target']) <= 250, all_df_records))
+
+        def count(df_records):
+            pred_sent_lens = []
+            target_sent_lens = []
+            pred_token_lens = []
+            target_token_lens = []
+
+            for i, row in enumerate(tqdm(df_records)):
+                pred = row['mt']
+                target = row['target']
+
+                pred_sents = sent_tokenize(pred, 'turkish')
+                target_sents = sent_tokenize(target, 'turkish')
+
+                pred_words = word_tokenize(pred, 'turkish')
+                target_words = word_tokenize(target, 'turkish')
+
+                pred_sent_lens.append(len(pred_sents))
+                target_sent_lens.append(len(target_sents))
+
+                pred_token_lens.append(len(pred_words))
+                target_token_lens.append(len(target_words))
+
+            return (pred_sent_lens,
+                    target_sent_lens,
+                    pred_token_lens,
+                    target_token_lens)
+
+        def compute_stats(counts,
+                          target_word_len_range: Optional[Tuple[int, int]] = None):
+            if target_word_len_range is None:
+                return (np.array(counts[0]).mean(),
+                        np.array(counts[1]).mean(),
+                        np.array(counts[2]).mean(),
+                        np.array(counts[3]).mean())
+            else:
+                target_word_len = np.array(counts[3])
+                range_min, range_max = target_word_len_range
+                ind = np.multiply(range_min < target_word_len, target_word_len <= range_max)
+                return (np.array(counts[0])[ind].mean(),
+                        np.array(counts[1])[ind].mean(),
+                        np.array(counts[2])[ind].mean(),
+                        np.array(counts[3])[ind].mean())
+
+        all_records_counts = count(all_df_records)
+        pred_sent_lens, target_sent_lens, _, target_token_lens = all_records_counts
+
+        all_records_stats = compute_stats(all_records_counts, target_word_len_range=None)
+
+        records_stats_250 = compute_stats(all_records_counts, target_word_len_range=(5, 250))
+
+        bucket_stats = {}
+
+        uniq_token_lengths, uniq_token_counts = np.unique(target_token_lens, return_counts=True)
+
+        #  Interquartile Range (IQR) outlier removal
+        Q1 = np.percentile(uniq_token_lengths, 25)
+        Q3 = np.percentile(uniq_token_lengths, 75)
+        IQR = Q3 - Q1
+        upper_word_len_bound = int(Q3 + 1.5 * IQR) # 2197
+
+        step_size = int((upper_word_len_bound - 3) / 100) # 21
+
+        for i in tqdm(range(3, upper_word_len_bound, step_size)):
+            stats = compute_stats(all_records_counts, target_word_len_range=(i, i + step_size))
+            bucket_stats[f'{str(i)} - {str(i + step_size)}'] = stats
+        bucket_stats = {k: v for (k, v) in bucket_stats.items() if not pd.isna(v[0])}
+
+        return all_records_stats, records_stats_250, bucket_stats, (pred_sent_lens, target_sent_lens)
 
     def _dump_to_csv(self, dump_alias: str) -> str:
         dump_folder_path = os.path.join(self.data_dir, dump_alias)
@@ -161,5 +303,17 @@ class ContentDumpReader:
 
 if __name__ == '__main__':
     reader = ContentDumpReader()
-    count_without_mts = reader.count_without_mts(reader.content_dumps[0])
-    print(count_without_mts)
+    # count_without_mts = reader.count_without_mts(reader.content_dumps[0])
+    # print(count_without_mts)
+    # ter_value = reader.compute_ter(reader.content_dumps[0])
+    # print(ter_value)
+
+    # ned_value = reader.compute_ned(reader.content_dumps[0], filter_by_len=False)
+    # print(ned_value)
+
+    # mt_eq_target_filtered = reader.compute_mt_eq_target(reader.content_dumps[0], filter_by_len=False)
+    # mt_eq_target = reader.compute_mt_eq_target(reader.content_dumps[0], filter_by_len=True)
+    # print(mt_eq_target, mt_eq_target_filtered)
+
+    stats = reader.compare_sentence_word_len(reader.content_dumps[0])
+    print(stats)
