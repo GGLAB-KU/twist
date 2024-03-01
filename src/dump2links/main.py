@@ -9,7 +9,7 @@ import logging
 import time
 
 # Create log file
-logging.basicConfig(level=logging.INFO, filename="projectlog.log", filemode="w")
+logging.basicConfig(level=logging.INFO, filename="dump2links.log", filemode="w")
 
 # Opening JSON file
 path = 'cx-corpora.en2tr.text.json'
