@@ -117,15 +117,15 @@ class ContentDumpReader:
         return count, len(df_records)
 
     def compare_sentence_word_len(self,
-                                  dump_alias: str) -> Tuple[int, int]:
+                                  dump_alias: str):
         all_df_records = self._read_dump_as_df_dict(dump_alias)
+        # all_df_records = list(filter(lambda x: 200 < len(x['target']) <= 250, all_df_records))
 
         def count(df_records):
             pred_sent_lens = []
             target_sent_lens = []
             pred_token_lens = []
             target_token_lens = []
-            target_char_len = []
 
             for i, row in enumerate(tqdm(df_records)):
                 pred = row['mt']
@@ -143,43 +143,52 @@ class ContentDumpReader:
                 pred_token_lens.append(len(pred_words))
                 target_token_lens.append(len(target_words))
 
-                target_char_len.append(len(target))
-
-            return (target_char_len,
-                    pred_sent_lens,
+            return (pred_sent_lens,
                     target_sent_lens,
                     pred_token_lens,
                     target_token_lens)
 
         def compute_stats(counts,
-                          target_char_len_range: Optional[Tuple[int, int]] = None):
-            if target_char_len_range is None:
-                return (np.array(counts[1]).mean(),
+                          target_word_len_range: Optional[Tuple[int, int]] = None):
+            if target_word_len_range is None:
+                return (np.array(counts[0]).mean(),
+                        np.array(counts[1]).mean(),
                         np.array(counts[2]).mean(),
-                        np.array(counts[3]).mean(),
-                        np.array(counts[4]).mean())
+                        np.array(counts[3]).mean())
             else:
-                target_char_len = np.array(counts[0])
-                range_min, range_max = target_char_len_range
-                ind = np.multiply(range_min < target_char_len, target_char_len <= range_max)
-                return (np.array(counts[1])[ind].mean(),
+                target_word_len = np.array(counts[3])
+                range_min, range_max = target_word_len_range
+                ind = np.multiply(range_min < target_word_len, target_word_len <= range_max)
+                return (np.array(counts[0])[ind].mean(),
+                        np.array(counts[1])[ind].mean(),
                         np.array(counts[2])[ind].mean(),
-                        np.array(counts[3])[ind].mean(),
-                        np.array(counts[4])[ind].mean())
+                        np.array(counts[3])[ind].mean())
 
         all_records_counts = count(all_df_records)
-        all_records_stats = compute_stats(all_records_counts, target_char_len_range=None)
+        pred_sent_lens, target_sent_lens, _, target_token_lens = all_records_counts
 
-        records_stats_250 = compute_stats(all_records_counts, target_char_len_range=(5, 250))
+        all_records_stats = compute_stats(all_records_counts, target_word_len_range=None)
+
+        records_stats_250 = compute_stats(all_records_counts, target_word_len_range=(5, 250))
 
         bucket_stats = {}
-        for i in tqdm(range(5, len(all_df_records[0]['target']), 100)):
-            # TODO: @gsoykan - {k: v for (k,v) in bucket_stats.items() if not pd.isna(v[0])}
-            #   you should filter entries with all nan values - sts they can be empty...
-            stats = compute_stats(all_records_counts, target_char_len_range=(i, i + 100))
-            bucket_stats[f'{str(i)} - {str(i + 100)}'] = stats
 
-        return all_records_stats, records_stats_250, bucket_stats
+        uniq_token_lengths, uniq_token_counts = np.unique(target_token_lens, return_counts=True)
+
+        #  Interquartile Range (IQR) outlier removal
+        Q1 = np.percentile(uniq_token_lengths, 25)
+        Q3 = np.percentile(uniq_token_lengths, 75)
+        IQR = Q3 - Q1
+        upper_word_len_bound = int(Q3 + 1.5 * IQR) # 2197
+
+        step_size = int((upper_word_len_bound - 3) / 100) # 21
+
+        for i in tqdm(range(3, upper_word_len_bound, step_size)):
+            stats = compute_stats(all_records_counts, target_word_len_range=(i, i + step_size))
+            bucket_stats[f'{str(i)} - {str(i + step_size)}'] = stats
+        bucket_stats = {k: v for (k, v) in bucket_stats.items() if not pd.isna(v[0])}
+
+        return all_records_stats, records_stats_250, bucket_stats, (pred_sent_lens, target_sent_lens)
 
     def _dump_to_csv(self, dump_alias: str) -> str:
         dump_folder_path = os.path.join(self.data_dir, dump_alias)
