@@ -1,18 +1,18 @@
 import json
-import math
 import os
 from collections import defaultdict
 from typing import Dict, List, Tuple, Optional
 
+import Levenshtein
 import ijson
 import numpy as np
 import pandas as pd
+import wikipediaapi
 from bs4 import BeautifulSoup
-from torchmetrics import MeanMetric
-from tqdm import tqdm
-from torchmetrics.text import TranslationEditRate
-import Levenshtein
 from nltk.tokenize import sent_tokenize, word_tokenize
+from torchmetrics import MeanMetric
+from torchmetrics.text import TranslationEditRate
+from tqdm import tqdm
 
 
 class ContentDumpReader:
@@ -234,6 +234,39 @@ class ContentDumpReader:
 
         return all_records_stats, records_stats_250, bucket_stats, (pred_sent_lens, target_sent_lens)
 
+    def find_dump_entry_of_wiki_article(self,
+                                        dump_alias: str,
+                                        wiki_title: str,
+                                        language: str = 'tr') -> Optional[List[Dict]]:
+        all_df_records = self._read_dump_as_df_dict(dump_alias)
+        wiki = wikipediaapi.Wikipedia('GGWikimedia (grkn245@gmail.com)', language)
+        wiki_page = wiki.page(wiki_title, )
+        assert wiki_page.exists(), f'Wikipedia page {wiki_title} does not exist'
+
+        # print(wiki_page.text)  # full text
+        # print(wiki_page.sections)  # sections
+
+        def get_first_lowest_section_text(page) -> str:
+            if len(page.sections) != 0:
+                return get_first_lowest_section_text(page.sections[0])
+            else:
+                return page.text
+
+        search_text = get_first_lowest_section_text(wiki_page)
+        search_sentence = sent_tokenize(search_text, 'turkish')[0]
+        dump_section = list(
+            filter(lambda x: search_sentence in x['target'], all_df_records))
+
+        if len(dump_section) == 0:
+            return None
+        elif len(dump_section) == 1:
+            found_section = dump_section[0]
+            doc_id = found_section['id_1']
+            unordered_doc_sections = list(filter(lambda x: x['id_1'] == doc_id, all_df_records))
+            return unordered_doc_sections
+        else:
+            raise ValueError(f'Multiple Dump sections found => {dump_section}')
+
     def _dump_to_csv(self, dump_alias: str) -> str:
         dump_folder_path = os.path.join(self.data_dir, dump_alias)
         files = os.listdir(dump_folder_path)
@@ -354,8 +387,8 @@ if __name__ == '__main__':
 
     # ned_value = reader.compute_ned(reader.content_dumps[0], filter_by_len=False)
     # print(ned_value)
-    mean_ops_by_type = reader.compute_edit_operations_by_type(reader.content_dumps[0], filter_by_len=True)
-    print(mean_ops_by_type)
+    # mean_ops_by_type = reader.compute_edit_operations_by_type(reader.content_dumps[0], filter_by_len=True)
+    # print(mean_ops_by_type)
 
     # mt_eq_target_filtered = reader.compute_mt_eq_target(reader.content_dumps[0], filter_by_len=False)
     # mt_eq_target = reader.compute_mt_eq_target(reader.content_dumps[0], filter_by_len=True)
@@ -363,3 +396,8 @@ if __name__ == '__main__':
 
     # stats = reader.compare_sentence_word_len(reader.content_dumps[0])
     # print(stats)
+
+    pair_doc_sections = reader.find_dump_entry_of_wiki_article(reader.content_dumps[0],
+                                                               "Elektron dizilimi",
+                                                               language='tr')
+    print(pair_doc_sections)
