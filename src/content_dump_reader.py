@@ -1,16 +1,18 @@
 import json
 import os
+from collections import defaultdict
 from typing import Dict, List, Tuple, Optional
 
+import Levenshtein
 import ijson
 import numpy as np
 import pandas as pd
+import wikipediaapi
 from bs4 import BeautifulSoup
-from torchmetrics import MeanMetric
-from tqdm import tqdm
-from torchmetrics.text import TranslationEditRate
-import Levenshtein
 from nltk.tokenize import sent_tokenize, word_tokenize
+from torchmetrics import MeanMetric
+from torchmetrics.text import TranslationEditRate
+from tqdm import tqdm
 
 
 class ContentDumpReader:
@@ -101,6 +103,47 @@ class ContentDumpReader:
         result = metric.compute()
         return result
 
+    def compute_edit_operations_by_type(self,
+                                        dump_alias: str,
+                                        filter_by_len: bool = True) -> float:
+        df_records = self._read_dump_as_df_dict(dump_alias)
+        if filter_by_len:
+            df_records = list(filter(lambda x: 5 < len(x['target']) <= 250, df_records))
+
+        delete_metric = MeanMetric()
+        equal_metric = MeanMetric()
+        insert_metric = MeanMetric()
+        replace_metric = MeanMetric()
+
+        for i, row in enumerate(tqdm(df_records)):
+            pred = row['mt']
+            target = row['target']
+            opcodes = Levenshtein.opcodes(pred, target)
+            op_dict = defaultdict(lambda: 0)
+            for opcode in opcodes:
+                op_type = opcode[0]
+                if op_type != 'delete':
+                    cost = abs(opcode[4] - opcode[3])
+                else:
+                    cost = abs(opcode[2] - opcode[1])
+                op_dict[op_type] = op_dict[op_type] + cost
+
+            total_ops = 0
+            for k, v in op_dict.items():
+                total_ops += v
+
+            normalized_op_dict = {k: v / total_ops for k, v in op_dict.items()}
+            delete_metric.update(normalized_op_dict.get('delete', 0))
+            equal_metric.update(normalized_op_dict.get('equal', 0))
+            insert_metric.update(normalized_op_dict.get('insert', 0))
+            replace_metric.update(normalized_op_dict.get('replace', 0))
+
+        delete_result = delete_metric.compute()
+        equal_result = equal_metric.compute()
+        insert_result = insert_metric.compute()
+        replace_result = replace_metric.compute()
+        return delete_result, equal_result, insert_result, replace_result
+
     def compute_mt_eq_target(self, dump_alias: str, filter_by_len: bool = True) -> Tuple[int, int]:
         df_records = self._read_dump_as_df_dict(dump_alias)
 
@@ -117,15 +160,16 @@ class ContentDumpReader:
         return count, len(df_records)
 
     def compare_sentence_word_len(self,
-                                  dump_alias: str) -> Tuple[int, int]:
+                                  dump_alias: str):
         all_df_records = self._read_dump_as_df_dict(dump_alias)
+
+        # all_df_records = list(filter(lambda x: 200 < len(x['target']) <= 250, all_df_records))
 
         def count(df_records):
             pred_sent_lens = []
             target_sent_lens = []
             pred_token_lens = []
             target_token_lens = []
-            target_char_len = []
 
             for i, row in enumerate(tqdm(df_records)):
                 pred = row['mt']
@@ -143,43 +187,85 @@ class ContentDumpReader:
                 pred_token_lens.append(len(pred_words))
                 target_token_lens.append(len(target_words))
 
-                target_char_len.append(len(target))
-
-            return (target_char_len,
-                    pred_sent_lens,
+            return (pred_sent_lens,
                     target_sent_lens,
                     pred_token_lens,
                     target_token_lens)
 
         def compute_stats(counts,
-                          target_char_len_range: Optional[Tuple[int, int]] = None):
-            if target_char_len_range is None:
-                return (np.array(counts[1]).mean(),
+                          target_word_len_range: Optional[Tuple[int, int]] = None):
+            if target_word_len_range is None:
+                return (np.array(counts[0]).mean(),
+                        np.array(counts[1]).mean(),
                         np.array(counts[2]).mean(),
-                        np.array(counts[3]).mean(),
-                        np.array(counts[4]).mean())
+                        np.array(counts[3]).mean())
             else:
-                target_char_len = np.array(counts[0])
-                range_min, range_max = target_char_len_range
-                ind = np.multiply(range_min < target_char_len, target_char_len <= range_max)
-                return (np.array(counts[1])[ind].mean(),
+                target_word_len = np.array(counts[3])
+                range_min, range_max = target_word_len_range
+                ind = np.multiply(range_min < target_word_len, target_word_len <= range_max)
+                return (np.array(counts[0])[ind].mean(),
+                        np.array(counts[1])[ind].mean(),
                         np.array(counts[2])[ind].mean(),
-                        np.array(counts[3])[ind].mean(),
-                        np.array(counts[4])[ind].mean())
+                        np.array(counts[3])[ind].mean())
 
         all_records_counts = count(all_df_records)
-        all_records_stats = compute_stats(all_records_counts, target_char_len_range=None)
+        pred_sent_lens, target_sent_lens, _, target_token_lens = all_records_counts
 
-        records_stats_250 = compute_stats(all_records_counts, target_char_len_range=(5, 250))
+        all_records_stats = compute_stats(all_records_counts, target_word_len_range=None)
+
+        records_stats_250 = compute_stats(all_records_counts, target_word_len_range=(5, 250))
 
         bucket_stats = {}
-        for i in tqdm(range(5, len(all_df_records[0]['target']), 100)):
-            # TODO: @gsoykan - {k: v for (k,v) in bucket_stats.items() if not pd.isna(v[0])}
-            #   you should filter entries with all nan values - sts they can be empty...
-            stats = compute_stats(all_records_counts, target_char_len_range=(i, i + 100))
-            bucket_stats[f'{str(i)} - {str(i + 100)}'] = stats
 
-        return all_records_stats, records_stats_250, bucket_stats
+        uniq_token_lengths, uniq_token_counts = np.unique(target_token_lens, return_counts=True)
+
+        #  Interquartile Range (IQR) outlier removal
+        Q1 = np.percentile(uniq_token_lengths, 25)
+        Q3 = np.percentile(uniq_token_lengths, 75)
+        IQR = Q3 - Q1
+        upper_word_len_bound = int(Q3 + 1.5 * IQR)  # 2197
+
+        step_size = int((upper_word_len_bound - 3) / 100)  # 21
+
+        for i in tqdm(range(3, upper_word_len_bound, step_size)):
+            stats = compute_stats(all_records_counts, target_word_len_range=(i, i + step_size))
+            bucket_stats[f'{str(i)} - {str(i + step_size)}'] = stats
+        bucket_stats = {k: v for (k, v) in bucket_stats.items() if not pd.isna(v[0])}
+
+        return all_records_stats, records_stats_250, bucket_stats, (pred_sent_lens, target_sent_lens)
+
+    def find_dump_entry_of_wiki_article(self,
+                                        dump_alias: str,
+                                        wiki_title: str,
+                                        language: str = 'tr') -> Optional[List[Dict]]:
+        all_df_records = self._read_dump_as_df_dict(dump_alias)
+        wiki = wikipediaapi.Wikipedia('GGWikimedia (grkn245@gmail.com)', language)
+        wiki_page = wiki.page(wiki_title, )
+        assert wiki_page.exists(), f'Wikipedia page {wiki_title} does not exist'
+
+        # print(wiki_page.text)  # full text
+        # print(wiki_page.sections)  # sections
+
+        def get_first_lowest_section_text(page) -> str:
+            if len(page.sections) != 0:
+                return get_first_lowest_section_text(page.sections[0])
+            else:
+                return page.text
+
+        search_text = get_first_lowest_section_text(wiki_page)
+        search_sentence = sent_tokenize(search_text, 'turkish')[0]
+        dump_section = list(
+            filter(lambda x: search_sentence in x['target'], all_df_records))
+
+        if len(dump_section) == 0:
+            return None
+        elif len(dump_section) == 1:
+            found_section = dump_section[0]
+            doc_id = found_section['id_1']
+            unordered_doc_sections = list(filter(lambda x: x['id_1'] == doc_id, all_df_records))
+            return unordered_doc_sections
+        else:
+            raise ValueError(f'Multiple Dump sections found => {dump_section}')
 
     def _dump_to_csv(self, dump_alias: str) -> str:
         dump_folder_path = os.path.join(self.data_dir, dump_alias)
@@ -301,10 +387,17 @@ if __name__ == '__main__':
 
     # ned_value = reader.compute_ned(reader.content_dumps[0], filter_by_len=False)
     # print(ned_value)
+    # mean_ops_by_type = reader.compute_edit_operations_by_type(reader.content_dumps[0], filter_by_len=True)
+    # print(mean_ops_by_type)
 
     # mt_eq_target_filtered = reader.compute_mt_eq_target(reader.content_dumps[0], filter_by_len=False)
     # mt_eq_target = reader.compute_mt_eq_target(reader.content_dumps[0], filter_by_len=True)
     # print(mt_eq_target, mt_eq_target_filtered)
 
-    stats = reader.compare_sentence_word_len(reader.content_dumps[0])
-    print(stats)
+    # stats = reader.compare_sentence_word_len(reader.content_dumps[0])
+    # print(stats)
+
+    pair_doc_sections = reader.find_dump_entry_of_wiki_article(reader.content_dumps[0],
+                                                               "Elektron dizilimi",
+                                                               language='tr')
+    print(pair_doc_sections)
