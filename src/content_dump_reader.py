@@ -16,10 +16,10 @@ from tqdm import tqdm
 
 
 class ContentDumpReader:
-    def __init__(self, data_dir: str = '../data', num_dumps: int = 1):
+    def __init__(self, data_dir: str = '../data', num_dumps: int = 2):
         self.data_dir = data_dir
         self.content_dumps = []
-        items = os.listdir(self.data_dir)
+        items = list(filter(lambda x: '2024' in x, os.listdir(self.data_dir)))
         for item in items[:num_dumps]:
             self.content_dumps.append(item)
 
@@ -63,6 +63,18 @@ class ContentDumpReader:
         df_records = content_df.to_dict('records')
         df_records.sort(key=lambda x: len(x['target']), reverse=True)
         return df_records
+
+    def get_dump_document_with_id(self,
+                                  df_records: List[Dict],
+                                  doc_id: str) -> List[Dict]:
+        dump_sections = list(
+            filter(lambda x: doc_id in x['id'],
+                   df_records))
+
+        if len(dump_sections) == 0:
+            return None
+        else:
+            return dump_sections
 
     def compute_ter(self, dump_alias: str) -> float:
         df_records = self._read_dump_as_df_dict(dump_alias)
@@ -253,9 +265,9 @@ class ContentDumpReader:
                 return page.text
 
         search_text = get_first_lowest_section_text(wiki_page)
-        search_sentence = sent_tokenize(search_text, 'turkish' if language == 'tr' else 'english')[0]
+        search_sentence = sent_tokenize(search_text, 'turkish' if language == 'tr' else 'english')[0].lower()
         dump_section = list(
-            filter(lambda x: search_sentence in (x['target'] if language == 'tr' else str(x['source'])),
+            filter(lambda x: search_sentence in (x['target'].lower() if language == 'tr' else str(x['source']).lower()),
                    all_df_records))
 
         if len(dump_section) == 0:
@@ -380,7 +392,7 @@ class ContentDumpReader:
 
 
 if __name__ == '__main__':
-    reader = ContentDumpReader()
+    reader = ContentDumpReader(num_dumps=2)
     # count_without_mts = reader.count_without_mts(reader.content_dumps[0])
     # print(count_without_mts)
     # ter_value = reader.compute_ter(reader.content_dumps[0])
@@ -398,7 +410,13 @@ if __name__ == '__main__':
     # stats = reader.compare_sentence_word_len(reader.content_dumps[0])
     # print(stats)
 
-    pair_doc_sections = reader.find_dump_entry_of_wiki_article(reader.content_dumps[0],
-                                                               "special relativity",
-                                                               language='en')
-    print(pair_doc_sections)
+    # pair_doc_sections = reader.find_dump_entry_of_wiki_article(reader.content_dumps[0],
+    #                                                           "Elektron",
+    #                                                           language='tr')
+    # print(pair_doc_sections)
+
+    dump_alias = reader.content_dumps[1]
+    df_records = reader._read_dump_as_df_dict(dump_alias)
+    doc_id = '156853'
+    result = reader.get_dump_document_with_id(df_records, doc_id)
+    print(result)
