@@ -253,9 +253,9 @@ class ContentDumpReader:
                 return page.text
 
         search_text = get_first_lowest_section_text(wiki_page)
-        search_sentence = sent_tokenize(search_text, 'turkish' if language == 'turkish' else 'english')[0]
+        search_sentence = sent_tokenize(search_text, 'turkish' if language == 'tr' else 'english')[0]
         dump_section = list(
-            filter(lambda x: search_sentence in (x['target'] if language == 'turkish' else x['source']),
+            filter(lambda x: search_sentence in (x['target'] if language == 'tr' else x['source']),
                    all_df_records))
 
         if len(dump_section) == 0:
@@ -399,6 +399,6 @@ if __name__ == '__main__':
     # print(stats)
 
     pair_doc_sections = reader.find_dump_entry_of_wiki_article(reader.content_dumps[0],
-                                                               "Elektron dizilimi",
-                                                               language='tr')
+                                                               "special relativity",
+                                                               language='en')
     print(pair_doc_sections)
