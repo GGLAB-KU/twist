@@ -253,9 +253,10 @@ class ContentDumpReader:
                 return page.text
 
         search_text = get_first_lowest_section_text(wiki_page)
-        search_sentence = sent_tokenize(search_text, 'turkish')[0]
+        search_sentence = sent_tokenize(search_text, 'turkish' if language == 'turkish' else 'english')[0]
         dump_section = list(
-            filter(lambda x: search_sentence in x['target'], all_df_records))
+            filter(lambda x: search_sentence in (x['target'] if language == 'turkish' else x['source']),
+                   all_df_records))
 
         if len(dump_section) == 0:
             return None
