@@ -56,13 +56,22 @@ class ContentDumpReader:
             'num_sections_without_mts': num_sections_without_mts
         }
 
-    def _read_dump_as_df_dict(self, dump_alias: str) -> List[Dict]:
+    def _read_dump_as_df_dict(self,
+                              dump_alias: str,
+                              convert_to_dict_with_id_1: bool = False) -> List[Dict] | Dict[str, List[Dict]]:
         csv_path = self.csv_dict[dump_alias]
         content_df = pd.read_csv(csv_path, dtype={'id_2': pd.StringDtype()})
         content_df = content_df.dropna(subset=['mt', 'target'])
         df_records = content_df.to_dict('records')
         df_records.sort(key=lambda x: len(x['target']), reverse=True)
-        return df_records
+
+        if convert_to_dict_with_id_1:
+            result = defaultdict(list)
+            for record in df_records:
+                result[record['id_1']] = result[record['id_1']] + [record]
+            return result
+        else:
+            return df_records
 
     def get_dump_document_with_id(self,
                                   df_records: List[Dict],
@@ -73,6 +82,16 @@ class ContentDumpReader:
 
         if len(dump_sections) == 0:
             return None
+        else:
+            return dump_sections
+
+    def get_dump_document_with_id_records_by_doc_id_1(self,
+                                                      df_records: Dict[str, List[Dict]],
+                                                      doc_id_1: str) -> List[Dict]:
+        dump_sections = df_records.get(doc_id_1, [])
+
+        if len(dump_sections) == 0:
+            return []
         else:
             return dump_sections
 
@@ -390,6 +409,71 @@ class ContentDumpReader:
         df.to_csv(csv_path, index=False)
         return csv_path
 
+    def update_translation_pairs_for_not_found(self):
+        file_path = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs.csv'
+        updated_path = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/updated_translation-pairs.csv'
+        df = pd.read_csv(file_path)
+
+        dump_alias = reader.content_dumps[1]
+        df_records = reader._read_dump_as_df_dict(dump_alias,
+                                                  convert_to_dict_with_id_1=True)
+
+        def update_is_done(row):
+            if not pd.isna(row['is_done']):
+                return row['is_done']
+
+            if row['scientific?'] not in ['TRUE', 'FALSE']:
+                return row['is_done']
+
+            doc_id = row['Unnamed: 0']
+
+            result = reader.get_dump_document_with_id_records_by_doc_id_1(df_records,
+                                                                          doc_id)
+
+            if result is None:
+                return 'NOT_FOUND'
+            else:
+                return row['is_done']
+
+        df['is_done'] = df.apply(update_is_done, axis=1)
+
+        df.to_csv(updated_path, index=False)
+
+    def end_to_end_annotation_mode(self):
+        updated_path = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/updated_translation-pairs.csv'
+        translation_pairs_df = pd.read_csv(updated_path)
+
+        dump_alias = reader.content_dumps[1]
+        df_records = reader._read_dump_as_df_dict(dump_alias,
+                                                  convert_to_dict_with_id_1=True)
+
+        translation_pairs = translation_pairs_df.to_dict('records')
+
+        for translation_pair in tqdm(translation_pairs, desc='annotating...'):
+            if translation_pair['is_done'] in ['NOT_FOUND',
+                                               'TRUE',
+                                               'FALSE']:
+                continue
+
+            doc_id = translation_pair['Unnamed: 0']
+            result = reader.get_dump_document_with_id_records_by_doc_id_1(df_records,
+                                                                          doc_id)
+
+            formatted = [
+                f"{item['id']}\t{item['id_1']}\t{item['id_2']}\t\t{item['source']}\t{item['mt']}\t{item['target']}" for
+                item in result]
+
+            for f in formatted:
+                print(f)
+                print('-------------\n')
+
+            while True:
+                user_input = input("Press Enter to continue to the next item or type 'Q' and press Enter to quit: ")
+                if user_input.upper() == 'Q':
+                    return  # Exit the function early
+                elif user_input == '':
+                    break  # Breaks the inner while loop and continues with the next iteration of the for loop
+
 
 if __name__ == '__main__':
     reader = ContentDumpReader(num_dumps=2)
@@ -415,8 +499,15 @@ if __name__ == '__main__':
     #                                                           language='tr')
     # print(pair_doc_sections)
 
-    dump_alias = reader.content_dumps[1]
-    df_records = reader._read_dump_as_df_dict(dump_alias)
-    doc_id = '156853'
-    result = reader.get_dump_document_with_id(df_records, doc_id)
-    print(result)
+    # dump_alias = reader.content_dumps[1]
+    # df_records = reader._read_dump_as_df_dict(dump_alias,
+    #                                           convert_to_dict_with_id_1=True)
+    # doc_id = 156853
+    # result = reader.get_dump_document_with_id(df_records, doc_id)
+    # print(result)
+    #
+    # reader.update_translation_pairs_for_not_found()
+
+    reader.end_to_end_annotation_mode()
+
+# [f"{item['id']}\t{item['id_1']}\t{item['id_2']}\t\t{item['source']}\t{item['mt']}\t{item['target']}" for item in result]
