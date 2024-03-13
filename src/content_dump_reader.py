@@ -750,16 +750,69 @@ class ContentDumpReader:
 
         df.to_csv(updated_path, index=False)
 
+    def merge_csv_reports(self,
+                          report_1_path: str,
+                          report_2_path: str,
+                          merged_path: str):
+        report_1_df = pd.read_csv(report_1_path)
+        report_2_df = pd.read_csv(report_2_path)
+
+        merged = pd.concat([report_1_df, report_2_df], ignore_index=True)
+
+        merged.replace({False: 0, True: 1}, inplace=True)
+
+        merged.to_csv(merged_path, index=False)
+
     def analyze_translation_quailities(self):
-        updated_path = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/exported_scientific_non-sci_chatgpt.csv'
+        updated_path = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/merged_export_for_analysis.csv'
         data = pd.read_csv(updated_path)
+
+        # number / percentage of correct & incorrect
         quality_distribution = data[['mt', 'target', 'chatgpt']].apply(pd.Series.value_counts)
         quality_percentage = quality_distribution / len(data) * 100
-        consistent_quality = data[(data['mt'] == data['target']) & (data['target'] == data['chatgpt'])]
 
+        # consistent quality matrix - correct for all three or incorrect for all three
+        consistent_quality = data[(data['mt'] == data['target']) & (data['target'] == data['chatgpt'])]
         consistent_quality_summary = consistent_quality[['mt', 'target', 'chatgpt']].apply(pd.Series.value_counts)
 
-        return quality_distribution, quality_percentage, consistent_quality_summary, quality_rates, quality_by_type
+        # Distribution of correct/incorrect translations by scientific vs non-scientific
+        sci_quality_distribution = {}
+        sci_quality_percentage = {}
+
+        for column in ['mt', 'target', 'chatgpt']:
+            # Calculate value counts for each translation type by scientific classification
+            dist = data.groupby('is_scientific')[column].value_counts().unstack(fill_value=0)
+            sci_quality_distribution[column] = dist
+
+            # Calculate percentage
+            perc = dist.div(dist.sum(axis=1), axis=0) * 100
+            sci_quality_percentage[column] = perc
+
+        # Number of mt-changed - mt-unchanged
+        mt_changed_distribution = data['mt_latin_changed'].value_counts()
+
+        # How many of mt-changed or unchanged turned out to be Correct or Incorrect
+        mt_changed_correctness = data.groupby('mt_latin_changed')['mt'].value_counts().unstack()
+
+        # Analysis based on mt-engine
+        num_google = sum(data['mt_engine'] == 'Google')
+        num_yandex = sum(data['mt_engine'] == 'Yandex')
+        engine_quality_distribution = data.groupby('mt_engine')[['mt', 'target', 'chatgpt']].mean()
+
+        # Analysis based on chatgpt
+        chatgpt_quality = data['chatgpt'].mean()
+
+        return {
+            'quality_distribution': quality_distribution,
+            'quality_percentage': quality_percentage,
+            'consistent_quality_summary': consistent_quality_summary,
+            'sci_quality_distribution': sci_quality_distribution,
+            'sci_quality_percentage': sci_quality_percentage,
+            'mt_changed_distribution': mt_changed_distribution,
+            'mt_changed_correctness': mt_changed_correctness,
+            'engine_quality_distribution': engine_quality_distribution,
+            'chatgpt_quality': chatgpt_quality
+        }
 
 
 if __name__ == '__main__':
@@ -821,5 +874,10 @@ if __name__ == '__main__':
     # reader.fill_chatgpt_in_samples()
 
     # reader.extract_translation_qualities()
+
+    # reader.merge_csv_reports(
+    #     '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/exported_scientific_non-sci_chatgpt.csv',
+    #     '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/ali_final.csv',
+    #     '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/merged_export_for_analysis.csv')
 
     reader.analyze_translation_quailities()
