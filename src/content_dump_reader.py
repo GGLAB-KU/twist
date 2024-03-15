@@ -2,6 +2,7 @@ import json
 import os
 from collections import defaultdict
 from typing import Dict, List, Tuple, Optional
+import random
 
 import Levenshtein
 import ijson
@@ -588,12 +589,25 @@ class ContentDumpReader:
         }
 
     def _scientific_convert_to_records(self,
-                                       translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv'):
+                                       translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv',
+                                       force_scientific: Optional[bool] = None,
+                                       doc_count: Optional[int] = None,
+                                       ):
         translation_pairs_df = pd.read_csv(translation_pair_path)
         dump_alias = reader.content_dumps[1]
         df_records = reader._read_dump_as_df_dict(dump_alias,
                                                   convert_to_dict_with_id_1=True)
         translation_pairs = translation_pairs_df.to_dict('records')
+
+        # scientific 256 docs available
+        if force_scientific == True:
+            translation_pairs = list(filter(lambda x: x['scientific?'] == 'TRUE', translation_pairs))
+        elif force_scientific == False:
+            translation_pairs = list(filter(lambda x: x['scientific?'] == 'FALSE', translation_pairs))
+
+        if doc_count is not None:
+            random.seed(42)
+            translation_pairs = random.sample(translation_pairs, doc_count)
 
         valid_records = []
         for translation_pair in tqdm(translation_pairs, desc='iterating...'):
@@ -615,34 +629,61 @@ class ContentDumpReader:
         return valid_records
 
     def scientific_compute_ter(self,
-                               translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv'):
-        valid_records = self._scientific_convert_to_records(translation_pair_path)
+                               translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv',
+                               force_scientific: Optional[bool] = None,
+                               doc_count: Optional[int] = None,
+                               char_limit: bool = True
+                               ):
+        valid_records = self._scientific_convert_to_records(translation_pair_path,
+                                                            force_scientific,
+                                                            doc_count)
 
-        # getting the rid of the instance that has outlier target len
-        valid_records = list(filter(lambda x: len(x['target']) <= 250, valid_records))
+        if char_limit:
+            # getting the rid of the instance that has outlier target len
+            valid_records = list(filter(lambda x: len(x['target']) <= 250, valid_records))
+
         return self.compute_ter_from_records(valid_records)
 
     def scientific_compute_ned(self,
-                               translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv'):
-        valid_records = self._scientific_convert_to_records(translation_pair_path)
+                               translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv',
+                               force_scientific: Optional[bool] = None,
+                               doc_count: Optional[int] = None, ):
+        valid_records = self._scientific_convert_to_records(translation_pair_path,
+                                                            force_scientific,
+                                                            doc_count)
 
         return self.compute_ned_from_records(valid_records)
 
     def scientific_compute_edit_ops(self,
-                                    translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv'):
-        valid_records = self._scientific_convert_to_records(translation_pair_path)
+                                    translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv',
+                                    force_scientific: Optional[bool] = None,
+                                    doc_count: Optional[int] = None,
+                                    ):
+        valid_records = self._scientific_convert_to_records(translation_pair_path,
+                                                            force_scientific,
+                                                            doc_count)
 
         return self.compute_edit_operations_by_type_from_records(valid_records)
 
     def scientific_compute_mt_eq_target(self,
-                                        translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv'):
-        valid_records = self._scientific_convert_to_records(translation_pair_path)
+                                        translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv',
+                                        force_scientific: Optional[bool] = None,
+                                        doc_count: Optional[int] = None,
+                                        ):
+        valid_records = self._scientific_convert_to_records(translation_pair_path,
+                                                            force_scientific,
+                                                            doc_count)
 
         return self.compute_mt_eq_target_from_records(valid_records)
 
     def scientific_compare_sentence_word_len(self,
-                                             translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv'):
-        valid_records = self._scientific_convert_to_records(translation_pair_path)
+                                             translation_pair_path: str = '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/wikimedia-mt-analysis - translation-pairs_final.csv',
+                                             force_scientific: Optional[bool] = None,
+                                             doc_count: Optional[int] = None,
+                                             ):
+        valid_records = self._scientific_convert_to_records(translation_pair_path,
+                                                            force_scientific,
+                                                            doc_count)
 
         return self.compare_sentence_word_len_from_records(valid_records)
 
@@ -848,25 +889,32 @@ if __name__ == '__main__':
     #
     # reader.update_translation_pairs_for_not_found()
 
-    # reader.end_to_end_annotation_mode()
+    reader.end_to_end_annotation_mode()
 
     #### scientific values
+    # force_scientific = False
+    # doc_count = 256
 
     # scientific_counts = reader.scientific_analysis_count_without_mts()
     # print(scientific_counts)
 
-    # ter_value = reader.scientific_compute_ter()
+    # ter_value = reader.scientific_compute_ter(force_scientific=force_scientific,
+    #                                           doc_count=doc_count)
     # print(ter_value)
 
-    # ned_value = reader.scientific_compute_ned()
+    # ned_value = reader.scientific_compute_ned(force_scientific=force_scientific,
+    #                                           doc_count=doc_count)
     # print(ned_value)
-    # mean_ops_by_type = reader.scientific_compute_edit_ops()
+    # mean_ops_by_type = reader.scientific_compute_edit_ops(force_scientific=force_scientific,
+    #                                                       doc_count=doc_count)
     # print(mean_ops_by_type)
 
-    # mt_eq_target = reader.scientific_compute_mt_eq_target()
+    # mt_eq_target = reader.scientific_compute_mt_eq_target(force_scientific=force_scientific,
+    #                                                       doc_count=doc_count)
     # print(mt_eq_target)
 
-    # stats = reader.scientific_compare_sentence_word_len()
+    # stats = reader.scientific_compare_sentence_word_len(force_scientific=force_scientific,
+                                                        # doc_count=doc_count)
     # print(stats)
 
     # reader.fill_mt_engine_in_samples()
@@ -880,4 +928,4 @@ if __name__ == '__main__':
     #     '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/ali_final.csv',
     #     '/home/gsoykan/Desktop/ku/wikimedia-mt-analysis/data/merged_export_for_analysis.csv')
 
-    reader.analyze_translation_quailities()
+    # reader.analyze_translation_quailities()
