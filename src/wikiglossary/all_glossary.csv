@@ -1,0 +1,1038 @@
+term,domain
+Ricci calculus,math
+Absolute geometry,math
+Abstract algebra,math
+Abstract analytic number theory,math
+Abstract differential geometry,math
+Abstract harmonic analysis,math
+homotopy theory,math
+Actuarial science,math
+Additive combinatorics,math
+Additive number theory,math
+Affine geometry,math
+Affine geometry of curves,math
+Affine differential geometry,math
+Ahlfors theory,math
+Algebra,math
+Algebraic analysis,math
+Algebraic combinatorics,math
+Algebraic computation,math
+Algebraic geometry,math
+Algebraic graph theory,math
+Algebraic statistics,math
+Algebraic topology,math
+Algorithmic number theory,math
+Anabelian geometry,math
+Mathematical analysis,math
+Approximation theory,math
+Arakelov geometry,math
+Arithmetic combinatorics,math
+Arithmetic,math
+Higher category theory,math
+Higher-dimensional algebra,math
+Hodge theory,math
+Holomorphic functional calculus,math
+Homological algebra,math
+Homology theory,math
+Homotopy theory,math
+Hyperbolic geometry,math
+Hyperbolic geometry,math
+Hypercomplex analysis,math
+Hyperfunction,math
+Operation research,math
+Operator K-theory,math
+Operator theory,math
+Optimal control theory,math
+Optimal maintenance,math
+Orbifold,math
+Order theory,math
+Ordered geometry,math
+Oscillation theory,math
+p-adic analysis,math
+p-adic analysis,math
+p-adic Hodge theory,math
+Parabolic geometry ,math
+Paraconsistent mathematics,math
+Partition theory,math
+Perturbation theory,math
+Picard&ndash;Vessiot theory,math
+Plane geometry,math
+Point-set topology,math
+Pointless topology,math
+Poisson geometry,math
+Polyhedral combinatorics,math
+Possibility theory,math
+Potential theory,math
+Precalculus,math
+Predicative mathematics,math
+Probability theory,math
+Probabilistic combinatorics,math
+Probabilistic graph theory,math
+Probabilistic number theory,math
+Projective geometry,math
+Projective differential geometry,math
+Proof theory,math
+Pseudo-Riemannian geometry,math
+Pure mathematics,math
+Quantum calculus,math
+Quantum geometry,math
+Quaternionic analysis,math
+Ramsey theory,math
+Rational geometry,math
+Real algebraic geometry,math
+Real algebraic geometry,math
+Real analysis,math
+Real K-theory,math
+Recreational mathematics,math
+Recursion theory,math
+Representation theory,math
+Group representation,math
+Representation theory of the Galilean group,math
+Representation theory of the Lorentz group,math
+Representation theory of the Poincaré group,math
+Representation theory of the symmetric group,math
+Ribbon theory,math
+Ricci calculus,math
+Ring theory,math
+Riemannian geometry,math
+Rough set,math
+abstract data type,cs
+abstract method,cs
+Abstraction ,cs
+agent architecture,cs
+agent-based model,cs
+aggregate function,cs
+agile software development,cs
+algorithm,cs
+algorithm design,cs
+algorithmic efficiency,cs
+American Standard Code for Information Interchange,cs
+application programming interface,cs
+application software,cs
+array data structure,cs
+Artifact ,cs
+artificial intelligence,cs
+ASCII,cs
+Assertion ,cs
+associative array,cs
+automata theory,cs
+automated reasoning,cs
+bandwidth ,cs
+Bayesian programming,cs
+benchmark ,cs
+"""best",cs
+big data,cs
+big O notation,cs
+binary number,cs
+binary search algorithm,cs
+binary tree,cs
+bioinformatics,cs
+bit,cs
+bit rate,cs
+blacklist ,cs
+BMP file format,cs
+Boolean data type,cs
+Boolean expression,cs
+Boolean algebra,cs
+byte,cs
+booting,cs
+callback ,cs
+central processing unit,cs
+character ,cs
+cipher,cs
+class ,cs
+class-based programming,cs
+client ,cs
+cleanroom software engineering,cs
+closure ,cs
+cloud computing,cs
+library ,cs
+computer programming,cs
+coding theory,cs
+cognitive science,cs
+collection ,cs
+comma-separated values,cs
+compiler,cs
+computability theory,cs
+computation,cs
+computational biology,cs
+computational chemistry,cs
+computational complexity theory,cs
+computational model,cs
+computational neuroscience,cs
+computational physics,cs
+computational science,cs
+computational steering,cs
+computer,cs
+computer architecture,cs
+computer data storage,cs
+computer ethics,cs
+computer graphics,cs
+computer network,cs
+computer program,cs
+computer programming,cs
+computer science,cs
+computer scientist,cs
+computer security,cs
+computer vision,cs
+computing,cs
+concatenation,cs
+concurrency ,cs
+conditional ,cs
+container ,cs
+continuation-passing style,cs
+control flow,cs
+Creative Commons,cs
+cryptography,cs
+comma-separated values,cs
+cyberbullying,cs
+cyberspace,cs
+daemon ,cs
+Data ,cs
+data center,cs
+database,cs
+data mining,cs
+data science,cs
+data structure,cs
+data type,cs
+debugging,cs
+declaration ,cs
+digital data,cs
+digital signal processing,cs
+discrete event simulation,cs
+disk storage,cs
+distributed computing,cs
+divide and conquer algorithm,cs
+Domain Name System,cs
+software documentation,cs
+domain ,cs
+Domain Name System,cs
+double-precision floating-point format,cs
+download,cs
+edge device,cs
+encryption,cs
+event ,cs
+event-driven programming,cs
+evolutionary computing,cs
+executable,cs
+execution ,cs
+exception handling,cs
+Existence detection,cs
+expression ,cs
+fault-tolerant computer system,cs
+feasibility study,cs
+field ,cs
+filename extension,cs
+filter (software),cs
+floating point arithmetic,cs
+for loop,cs
+formal methods,cs
+formal verification,cs
+functional programming,cs
+game theory,cs
+"""garbage in",cs
+Graphics Interchange Format,cs
+gigabyte,cs
+global variable,cs
+graph theory,cs
+handle ,cs
+computational complexity theory,cs
+hash function,cs
+hash table,cs
+heap ,cs
+heapsort,cs
+human-computer interaction,cs
+identifier ,cs
+integrated development environment,cs
+image processing,cs
+imperative programming,cs
+incremental build model,cs
+information space analysis,cs
+information visualization,cs
+inheritance ,cs
+input/output,cs
+insertion sort,cs
+instruction cycle,cs
+integer ,cs
+integrated development environment,cs
+integration testing,cs
+intellectual property,cs
+intelligent agent,cs
+interface ,cs
+internal documentation,cs
+internet,cs
+internet bot,cs
+interpreter ,cs
+invariant ,cs
+iteration,cs
+java ,cs
+kernel ,cs
+library (computing),cs
+linear search,cs
+linked list,cs
+linker ,cs
+list ,cs
+loader ,cs
+logic error,cs
+logic programming,cs
+machine learning,cs
+machine vision,cs
+mathematical logic,cs
+matrix ,cs
+computer data storage,cs
+merge sort,cs
+method ,cs
+software development process,cs
+modem,cs
+natural language processing,cs
+node ,cs
+number theory,cs
+numerical analysis,cs
+numerical method,cs
+object ,cs
+object code,cs
+object-oriented analysis and design,cs
+object-oriented programming,cs
+open-source software,cs
+operating system,cs
+optical fiber,cs
+pair programming,cs
+parallel computing,cs
+parameter ,cs
+peripheral,cs
+pointer ,cs
+postcondition,cs
+precondition,cs
+primary storage,cs
+primitive data type,cs
+priority queue,cs
+procedural programming,cs
+procedure ,cs
+program lifecycle phase,cs
+programming language,cs
+programming language implementation,cs
+programming language theory,cs
+Prolog,cs
+Python ,cs
+quantum computing,cs
+queue ,cs
+quicksort,cs
+r ,cs
+radix,cs
+record ,cs
+recursion,cs
+reference ,cs
+reference counting,cs
+relational database,cs
+reliability engineering,cs
+regression testing,cs
+requirements analysis,cs
+robotics,cs
+round-off error,cs
+router ,cs
+routing table,cs
+run time ,cs
+run time ,cs
+search algorithm,cs
+auxiliary memory,cs
+selection sort,cs
+semantics ,cs
+sequence,cs
+serializability,cs
+serialization,cs
+service level agreement,cs
+set ,cs
+software,cs
+software agent,cs
+software construction,cs
+software deployment,cs
+software design,cs
+software development,cs
+software development process,cs
+software engineering,cs
+software maintenance,cs
+software prototyping,cs
+software requirements specification,cs
+software testing,cs
+sorting algorithm,cs
+source code,cs
+spiral model,cs
+stack ,cs
+state ,cs
+statement ,cs
+computer data storage,cs
+stream ,cs
+string ,cs
+structured storage,cs
+subroutine,cs
+symbolic computation,cs
+syntax ,cs
+syntax error,cs
+system console,cs
+technical documentation,cs
+third-generation programming language,cs
+top-down and bottom-up design,cs
+tree ,cs
+type theory,cs
+upload,cs
+URL,cs
+user ,cs
+user agent,cs
+user interface,cs
+user interface design,cs
+variable ,cs
+virtual machine,cs
+V-Model ,cs
+waterfall model,cs
+WAV,cs
+web crawler,cs
+Wi-Fi,cs
+XHTML,cs
+Abbe number,physics
+absolute electrode potential,physics
+absolute humidity,physics
+absolute motion,physics
+absolute pressure,physics
+absolute scale,physics
+absolute zero,physics
+absorption spectroscopy,physics
+Absorbance,physics
+accelerating expansion of the universe,physics
+acceleration,physics
+Gravitational acceleration,physics
+accelerometer,physics
+acoustics,physics
+adhesion,physics
+adiabatic cooling,physics
+adiabatic heating,physics
+adiabatic process,physics
+aerodynamics,physics
+afocal system,physics
+air mass,physics
+air mass ,physics
+albedo,physics
+alloy,physics
+alpha decay,physics
+alpha particle,physics
+alternating current,physics
+ammeter,physics
+amorphous solid,physics
+ampere,physics
+amplifier,physics
+amplitude,physics
+angle of incidence ,physics
+angle of reflection,physics
+ångström,physics
+angular acceleration,physics
+angular displacement,physics
+angular frequency,physics
+angular momentum,physics
+angular velocity,physics
+anion,physics
+annihilation,physics
+anode,physics
+anti-gravity,physics
+antimatter,physics
+antineutron,physics
+antiparticle,physics
+antiproton,physics
+antiquark,physics
+arc length,physics
+Archimedes' principle,physics
+area moment of inertia,physics
+astrophysics,physics
+attenuation coefficient,physics
+atom,physics
+atomic line filter,physics
+atomic mass,physics
+atomic mass unit,physics
+atomic number,physics
+atomic orbital,physics
+atomic packing factor,physics
+atomic physics,physics
+atomic structure,physics
+atomic weight,physics
+audio frequency,physics
+Avogadro constant,physics
+Avogadro number,physics
+Avogadro's law,physics
+axion,physics
+azimuthal quantum number,physics
+Babinet's principle,physics
+background radiation,physics
+Balanced Forces,physics
+ballistics,physics
+Balmer series,physics
+barometer,physics
+baryon,physics
+Battery ,physics
+Beam ,physics
+bending,physics
+bending moment,physics
+Bernoulli's equation,physics
+Bernoulli's principle,physics
+Bessel function,physics
+beta decay,physics
+beta particle,physics
+Big Bang,physics
+binding energy,physics
+binomial random variable,physics
+biocatalysis,physics
+biophysics,physics
+black body,physics
+black-body radiation,physics
+block and tackle,physics
+Bohr model,physics
+boiling point,physics
+boiling point elevation,physics
+Boltzmann constant,physics
+Bose–Einstein condensate,physics
+boson,physics
+Boyle's law,physics
+Bra–ket notation,physics
+Bragg's law,physics
+bremsstrahlung,physics
+Brewster's angle,physics
+british thermal unit,physics
+brittleness,physics
+Brownian motion,physics
+Bubble ,physics
+Bulk modulus,physics
+buoyancy,physics
+calculus,physics
+capacitance,physics
+capacitive reactance,physics
+capacitor,physics
+Carnot cycle,physics
+Cartesian coordinate system,physics
+cathode,physics
+cathode ray,physics
+cation,physics
+celestial mechanics,physics
+Celsius scale,physics
+center of curvature,physics
+center of gravity,physics
+center of mass,physics
+Center of pressure ,physics
+Centigrade ,physics
+classical central-force problem,physics
+centrifugal force,physics
+centripetal force,physics
+cGh physics,physics
+chain reaction,physics
+change of base rule,physics
+charge carrier,physics
+chemical physics,physics
+chromatic aberration,physics
+circular motion,physics
+classical mechanics,physics
+Friction#Coefficient of friction,physics
+Coherence ,physics
+cohesion ,physics
+cold fusion,physics
+complex harmonic motion,physics
+composite particle,physics
+Compton scattering,physics
+concave lens,physics
+condensation point,physics
+condensed matter physics,physics
+Momentum#Conservation,physics
+conservation law,physics
+constructive interference,physics
+continuous spectrum,physics
+continuum mechanics,physics
+convection,physics
+convex lens,physics
+coulomb,physics
+Coulomb's law,physics
+Lens ,physics
+cosmic background radiation,physics
+creep ,physics
+Crest ,physics
+crest factor,physics
+Critical angle ,physics
+critical mass,physics
+cGh physics,physics
+Curie temperature,physics
+current density,physics
+curvilinear motion,physics
+cyclotron,physics
+Dalton's law,physics
+damped vibration,physics
+Damping ratio,physics
+Darcy–Weisbach equation,physics
+dark energy,physics
+dark matter,physics
+DC motor,physics
+decibel,physics
+definite integral,physics
+Deflection ,physics
+Deformation ,physics
+density,physics
+derivative,physics
+destructive interference,physics
+diamagnetism,physics
+dielectric,physics
+diffraction,physics
+direct current,physics
+Dispersion ,physics
+displacement ,physics
+distance,physics
+drift velocity,physics
+Doppler effect,physics
+Drag ,physics
+ductility,physics
+Dynamics ,physics
+dyne,physics
+econophysics,physics
+elastic collision,physics
+elastic energy,physics
+elastic instability,physics
+elastic modulus,physics
+Elasticity ,physics
+electric charge,physics
+electric circuit,physics
+electric current,physics
+electric displacement field,physics
+electric field,physics
+electric field gradient,physics
+Electric intensity,physics
+electric generator,physics
+electric motor,physics
+electric potential,physics
+electric power,physics
+electrical conductor,physics
+electrical insulator,physics
+electrical potential energy,physics
+electrical and electronics engineering,physics
+electrical network,physics
+electrical resistance,physics
+electricity,physics
+electro-optic effect,physics
+electrochemical cell,physics
+electrodynamics,physics
+electrolytic cell,physics
+electromagnet,physics
+electromagnetic field,physics
+electromagnetic induction,physics
+electromagnetic radiation,physics
+electromagnetic spectrum,physics
+electromagnetic wave equation,physics
+electromagnetism,physics
+electromechanics,physics
+electromotive force,physics
+electron,physics
+electron capture,physics
+Atomic orbital,physics
+electron pair,physics
+electron paramagnetic resonance,physics
+electronvolt,physics
+electronegativity,physics
+electronics,physics
+electrostatics,physics
+electrostriction,physics
+elementary charge,physics
+elementary particle,physics
+emission spectrum,physics
+emissivity,physics
+energy,physics
+energy level,physics
+endothermic,physics
+engineering physics,physics
+enthalpy,physics
+entropy,physics
+equilibrant force,physics
+equipartition,physics
+escape velocity,physics
+excited state,physics
+exothermic,physics
+experimental physics,physics
+farad,physics
+falling bodies,physics
+Faraday ,physics
+Faraday constant,physics
+Fermat's principle,physics
+Fermi surface,physics
+fermion,physics
+ferrimagnetism,physics
+ferromagnetism,physics
+field line,physics
+first law of thermodynamics,physics
+Nuclear fission,physics
+Flavour ,physics
+fluid,physics
+fluid mechanics,physics
+fluid physics,physics
+fluid statics,physics
+fluorescence,physics
+flux,physics
+Flux#Terminology,physics
+focal length,physics
+Focus ,physics
+force,physics
+force carrier,physics
+Force field (physics),physics
+frame of reference,physics
+Fraunhofer lines,physics
+free body diagram,physics
+frequency,physics
+frequency modulation,physics
+free fall,physics
+freezing point,physics
+friction,physics
+Function ,physics
+fundamental forces,physics
+fundamental frequency,physics
+fundamental theorem of calculus,physics
+Nuclear fusion,physics
+gamma ray,physics
+gas,physics
+general relativity,physics
+geophysics,physics
+gluon,physics
+Graham's law of diffusion,physics
+gravitation,physics
+gravitational constant,physics
+gravitational energy,physics
+gravitational field,physics
+gravitational potential,physics
+gravitational wave,physics
+graviton,physics
+gravity,physics
+Ground ,physics
+ground reaction force,physics
+ground state,physics
+group velocity,physics
+hadron,physics
+half-life,physics
+Hamilton's principle,physics
+Hamiltonian mechanics,physics
+harmonic mean,physics
+heat,physics
+heat transfer,physics
+Helmholtz free energy,physics
+hertz,physics
+Higgs boson,physics
+homeokinetics,physics
+horsepower,physics
+Huygens–Fresnel principle,physics
+hydrostatics,physics
+ice point,physics
+Electrical impedance,physics
+Implosion ,physics
+impulse ,physics
+indefinite integral,physics
+inductance,physics
+infrasound,physics
+inertia,physics
+Electrical reactance#Inductive reactance,physics
+integral,physics
+integral transform,physics
+International System of Units,physics
+invariant mass,physics
+ion,physics
+ionic bond,physics
+ionization,physics
+ionization chamber,physics
+ionizing radiation,physics
+isotope,physics
+Josephson effect,physics
+joule,physics
+Kelvin,physics
+kinematics,physics
+kinetic energy,physics
+Kirchhoff's circuit laws,physics
+Kirchhoff's equations,physics
+Lagrangian mechanics,physics
+laminar flow,physics
+Laplace transform,physics
+Laplace–Runge–Lenz vector,physics
+laser,physics
+Newton's law of universal gravitation,physics
+LC circuit,physics
+Lenz's law,physics
+lepton,physics
+lever,physics
+levitation (physics),physics
+light,physics
+linear actuator,physics
+linear algebra,physics
+line of force,physics
+linear elasticity,physics
+Liouville's theorem ,physics
+liquid,physics
+liquid crystal,physics
+longitudinal wave,physics
+M-theory,physics
+Mach number,physics
+Mach's principle,physics
+machine,physics
+machine element,physics
+Maclaurin series,physics
+magnetic field,physics
+magnetism,physics
+magnetostatics,physics
+mass,physics
+mass balance,physics
+mass density,physics
+mass flux,physics
+mass moment of inertia,physics
+mass number,physics
+mass spectrometry,physics
+material properties,physics
+materials science,physics
+mathematical physics,physics
+mathematics,physics
+Matrix ,physics
+matter,physics
+Maxwell's equations,physics
+measure of central tendency,physics
+mechanical energy,physics
+mechanical filter,physics
+mechanical equilibrium,physics
+mechanical wave,physics
+mechanics,physics
+melting,physics
+meson,physics
+modulus of elasticity,physics
+molar concentration,physics
+molar mass,physics
+molecule,physics
+molecular physics,physics
+Moment ,physics
+moment of inertia,physics
+momentum,physics
+Spectral color,physics
+motion ,physics
+muon,physics
+nanoengineering,physics
+nanotechnology,physics
+Navier–Stokes equations,physics
+neurophysics,physics
+neutrino,physics
+neutron,physics
+prompt neutron,physics
+delayed neutron,physics
+neutron cross-section,physics
+newton ,physics
+Newton's laws of motion,physics
+Newton's law of universal gravitation,physics
+Newtonian fluid,physics
+Newtonian mechanics,physics
+normal force,physics
+nuclear force,physics
+nuclear physics,physics
+nuclear reaction,physics
+nuclear transmutation,physics
+nucleon,physics
+atomic nucleus,physics
+nuclide,physics
+Ohm,physics
+Ohm's law,physics
+optical tweezers,physics
+optically detected magnetic resonance,physics
+optics,physics
+Paraffin wax,physics
+Series and parallel circuits,physics
+Parity ,physics
+particle,physics
+particle accelerator,physics
+particle displacement,physics
+particle physics,physics
+Pascal's law,physics
+Pauli exclusion principle,physics
+pendulum,physics
+periodic table of the elements,physics
+phase (matter),physics
+phase (waves),physics
+phase equilibrium,physics
+phenomenology ,physics
+phosphorescence,physics
+photoelectric effect,physics
+photon,physics
+photonics,physics
+physical chemistry,physics
+physical constant,physics
+physical quantity,physics
+physics,physics
+piezoelectricity,physics
+pion,physics
+Planck constant,physics
+Planck units,physics
+Planck's law,physics
+Plasma ,physics
+plasma physics,physics
+Plasticity ,physics
+pneumatics,physics
+positron,physics
+potential energy,physics
+Power ,physics
+pressure,physics
+principle of relativity,physics
+probability,physics
+probability distribution,physics
+probability theory,physics
+proton,physics
+psi particle,physics
+pulley,physics
+Pulse ,physics
+pulse wave,physics
+quantization ,physics
+quantum,physics
+quantum chromodynamics,physics
+quantum electrodynamics,physics
+quantum field theory,physics
+quantum gravity,physics
+quantum mechanics,physics
+quantum number,physics
+quantum physics,physics
+quantum state,physics
+quark,physics
+quasiparticle,physics
+radiant energy,physics
+radiation,physics
+radioactive decay,physics
+radionuclide,physics
+Radius of curvature ,physics
+redshift,physics
+refraction,physics
+refractive index,physics
+relative atomic mass,physics
+relativistic mechanics,physics
+theory of relativity,physics
+rest frame,physics
+rigid body,physics
+rotational energy,physics
+rotational speed,physics
+Rydberg formula,physics
+scalar ,physics
+scattering,physics
+science,physics
+Screw ,physics
+second law of thermodynamics,physics
+Seebeck effect,physics
+Series and parallel circuit,physics
+shadow matter,physics
+shear modulus,physics
+shear strength,physics
+shear stress,physics
+shortwave radiation,physics
+Schrödinger equation,physics
+simple harmonic motion,physics
+simple machine,physics
+siphon,physics
+Snell's law,physics
+solar cell,physics
+solid,physics
+solid mechanics,physics
+solid-state physics,physics
+solubility,physics
+Sonoluminescence,physics
+sound,physics
+special relativity,physics
+specific activity,physics
+speed,physics
+speed of light,physics
+speed of sound,physics
+spherical aberration,physics
+spin quantum number,physics
+stable isotope ratio,physics
+stable nuclide,physics
+standard atomic weight,physics
+Standard Model,physics
+standing wave,physics
+state of matter,physics
+statics,physics
+statistical mechanics,physics
+stiffness,physics
+Deformation ,physics
+Work hardening,physics
+strength of materials,physics
+Stress ,physics
+stress–strain curve,physics
+string duality,physics
+string theory,physics
+structural load,physics
+subatomic particle,physics
+Sublimation ,physics
+superconductivity,physics
+superconductor,physics
+superhard material,physics
+superposition principle,physics
+supersymmetry,physics
+surface tension,physics
+temperature,physics
+Tensile Modulus,physics
+tensile strength,physics
+Tesla ,physics
+test particle,physics
+theoretical physics,physics
+theory of everything,physics
+theory of relativity,physics
+thermal conduction,physics
+thermal equilibrium,physics
+thermal radiation,physics
+thermionic emission,physics
+thermodynamic equilibrium,physics
+thermodynamic free energy,physics
+thermodynamics,physics
+thermometer,physics
+third law of thermodynamics,physics
+torque,physics
+total internal reflection,physics
+toughness,physics
+trajectory,physics
+transducer,physics
+transmission medium,physics
+transverse wave,physics
+trigonometry,physics
+trimean,physics
+triple point,physics
+truncated mean,physics
+Unbalanced forces,physics
+uncertainty principle,physics
+unified atomic mass unit,physics
+uniform motion,physics
+uniform circular motion,physics
+unit vector,physics
+utility frequency,physics
+vacuum,physics
+valence electron,physics
+valence shell,physics
+valley of stability,physics
+Van de Graaff generator,physics
+variable capacitor,physics
+variable resistor,physics
+Vector ,physics
+vector space,physics
+velocity,physics
+virtual image,physics
+virtual particle,physics
+viscoelasticity,physics
+viscosity,physics
+visible light,physics
+volt,physics
+Volta potential,physics
+voltage,physics
+voltmeter,physics
+Electric field,physics
+volume,physics
+W and Z bosons,physics
+watt,physics
+wave,physics
+wave equation,physics
+wave function,physics
+wave function collapse,physics
+wave–particle duality,physics
+wavelength,physics
+weak interaction,physics
+Weber ,physics
+Wedge ,physics
+weight,physics
+wheel and axle,physics
+wind,physics
+work ,physics
+work function,physics
+X-ray,physics
+Young’s modulus,physics
+Zeeman effect,physics
